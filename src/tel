@@ -1,0 +1,96 @@
+#!/usr/bin/env python
+import requests
+
+template = "{0:35} {1:20}"
+
+def find_name(text, found):
+
+    try:
+        nameSearchTerm = '<strong>Email: </strong><a href="mailto: '
+        x = text.index(nameSearchTerm)
+    except Exception, e:
+        return found
+    try:
+        y = text[x+len(nameSearchTerm):].index('<')
+    except Exception, e:
+        return found
+    name = text[x+len(nameSearchTerm):x+len(nameSearchTerm)+y]
+
+    try:
+        phoneSearchTerm = '<strong>Phone: </strong>'
+        x = text.index(phoneSearchTerm)
+    except Exception, e:
+        return found
+    try:
+        y = text[x:].index('</br>')
+    except Exception, e:
+        return fount
+    print template.format(name, text[x+len(phoneSearchTerm):x+y])
+    return find_name(text[x+y:], True)
+
+
+def find_office(text, Addr):
+    try:
+        nameSearchTerm = 'font size=-1>'
+        x = text.index(nameSearchTerm)
+    except Exception, e:
+        return -1
+    try:
+        y = text[x+len(nameSearchTerm):].index('<')
+    except Exception, e:
+        return -1
+    name = text[x+len(nameSearchTerm):x+len(nameSearchTerm)+y]
+    name_text = search_server('Name', name, Addr)
+    find_name(name_text, False)
+    return find_office(text[x+len(nameSearchTerm)+y:], Addr)
+
+
+def search_server(Type, Criteria, Addr):
+    try:
+        payload = {'Type': Type, 'Criteria': Criteria}
+        r = requests.get(Addr, params=payload)
+    except Exception, e:
+        print "Cannot contact server : " + options.server_addr
+        return -1
+    return r.text.encode("utf-8")
+
+def main(options):
+    text = search_server(options.Type, options.Criteria, options.server_addr)
+    if find_name(text, False) == False:
+        find_office(text, options.server_addr)
+
+def check_type(arg):
+    return {
+        'all': "All",
+        'cork': "Office",
+        'dublin': "Office",
+        'lisbon': "Office",
+        'prague': "Office",
+        'wroclaw': "Office",
+        'san jose': "Office"
+        }.get(arg, "Name")
+
+def set_type_criteria(args, options):
+    options.Type = options.Criteria = None
+    if len(args) == 1:
+        options.Type = check_type(args[0].lower())
+        options.Criteria = args[0]
+    return options
+
+
+if __name__ == "__main__":
+    from optparse import OptionParser
+    usage = "usage: %prog [options] arg1\n\
+Usage: %prog <username>"
+    parser = OptionParser(usage=usage)
+    parser.add_option("-s", "--server", dest="server_addr",
+                      help="Corporate Directory URL", default='NONE')
+
+    (options, args) = parser.parse_args()
+    options = set_type_criteria(args, options)
+
+    if options.Type != None or options.Criteria != None:
+        main(options)
+    
+
+
