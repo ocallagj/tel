@@ -84,7 +84,7 @@ if __name__ == "__main__":
 Usage: %prog <username>"
     parser = OptionParser(usage=usage)
     parser.add_option("-s", "--server", dest="server_addr",
-                      help="Corporate Directory URL", default='NONE')
+                      help="Corporate Directory URL", default='http://<servername>/')
 
     (options, args) = parser.parse_args()
     options = set_type_criteria(args, options)
