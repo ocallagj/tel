@@ -1,6 +1,4 @@
 tel
 ===
 
-
-
 telephone book
